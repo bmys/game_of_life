@@ -75,15 +75,16 @@ while running:
 
     if not pause:
         b2 = copy.deepcopy(b)
-        for ly in range(len(b)):
-            for lx in range(len(b[0])):
-                nc = neighbour_count(b, lx, ly)
-                if not b[ly][lx] and nc == 3:
-                    b2[ly][lx] = True
+        for iy, ly in enumerate(b):
+            for ix, lx in enumerate(ly):
+                nc = neighbour_count(b, ix, iy)
+                if not lx and nc == 3:
+                    b2[iy][ix] = True
                     continue
-                if b[ly][lx] and nc not in (2, 3):
-                    b2[ly][lx] = False
+                if lx and nc not in (2, 3):
+                    b2[iy][ix] = False
         b = b2
+
     screen.fill((0, 0, 0))
     draw_grid(board_size)
     draw_cells(b)
