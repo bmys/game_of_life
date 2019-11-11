@@ -53,6 +53,19 @@ def draw_cells(board):
                 pg.draw.rect(screen, (0, 0, 255), pg.Rect(x * s, y * s, s, s))
 
 
+def moore_neighbourhood(board, stay_alive, born):
+    b2 = copy.deepcopy(board)
+    for row_index, row in enumerate(board):
+        for element_index, element in enumerate(row):
+            nc = neighbour_count(board, element_index, row_index)
+            if not element and nc in born:
+                b2[row_index][element_index] = True
+                continue
+            if element and nc not in stay_alive:
+                b2[row_index][element_index] = False
+    return b2
+
+
 b = create_board(*board_size)
 
 
@@ -74,16 +87,7 @@ while running:
                 pause = b = random_board(*board_size)
 
     if not pause:
-        b2 = copy.deepcopy(b)
-        for iy, ly in enumerate(b):
-            for ix, lx in enumerate(ly):
-                nc = neighbour_count(b, ix, iy)
-                if not lx and nc == 3:
-                    b2[iy][ix] = True
-                    continue
-                if lx and nc not in (2, 3):
-                    b2[iy][ix] = False
-        b = b2
+        b = moore_neighbourhood(b, (1, 2, 3, 4, 5), ( 3, ))
 
     screen.fill((0, 0, 0))
     draw_grid(board_size)
