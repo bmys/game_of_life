@@ -1,9 +1,8 @@
 import pygame as pg
 import operator
-import copy
 from random import choice
 
-board_size = (50, 50)
+board_size = (100, 100)
 s = 8
 pg.init()
 display_size = tuple(map(operator.mul, board_size, (s, s)))
@@ -53,21 +52,27 @@ def draw_cells(board):
                 pg.draw.rect(screen, (0, 0, 255), pg.Rect(x * s, y * s, s, s))
 
 
-def moore_neighbourhood(board, stay_alive, born):
-    b2 = copy.deepcopy(board)
+def moore_neighbourhood(board, stay_alive_rule, born_rule):
+    to_die = set()
+    to_born = set()
+
     for row_index, row in enumerate(board):
         for element_index, element in enumerate(row):
             nc = neighbour_count(board, element_index, row_index)
-            if not element and nc in born:
-                b2[row_index][element_index] = True
+            if not element and nc in born_rule:
+                to_born.add((row_index, element_index))
                 continue
-            if element and nc not in stay_alive:
-                b2[row_index][element_index] = False
-    return b2
+            if element and nc not in stay_alive_rule:
+                to_die.add((row_index, element_index))
+
+    for killed in to_die:
+        board[killed[0]][killed[1]] = False
+
+    for born in to_born:
+        board[born[0]][born[1]] = True
 
 
 b = create_board(*board_size)
-
 
 pause = True
 running = True
@@ -87,7 +92,7 @@ while running:
                 pause = b = random_board(*board_size)
 
     if not pause:
-        b = moore_neighbourhood(b, (1, 2, 3, 4, 5), ( 3, ))
+        moore_neighbourhood(b, (0, 3, 4, 5, 6), (3, 4))
 
     screen.fill((0, 0, 0))
     draw_grid(board_size)
