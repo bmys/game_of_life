@@ -5,6 +5,7 @@ from random import choice
 
 board_size = (50, 50)
 s = 8
+fill_color = (0, 0, 0)
 pg.init()
 display_size = tuple(map(operator.mul, board_size, (s, s)))
 screen = pg.display.set_mode(display_size)
@@ -89,7 +90,7 @@ while running:
     if not pause:
         b = moore_neighbourhood(b, (1, 2, 3, 4, 5), ( 3, ))
 
-    screen.fill((0, 0, 0))
+    screen.fill(fill_color)
     draw_grid(board_size)
     draw_cells(b)
     color = (255, 0, 0) if pause else (0, 255, 0)
